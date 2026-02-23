@@ -1,0 +1,33 @@
+# Render Blueprint - single service (frontend + backend)
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: cooksy
+    runtime: node
+    region: oregon
+
+    buildCommand: npm run build
+    startCommand: npm start
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        sync: false
+        # Set to your app URL, e.g. https://cooksy.onrender.com
+      - key: XAI_API_KEY
+        sync: false
+      - key: EMAIL_HOST
+        sync: false
+      - key: EMAIL_PORT
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
