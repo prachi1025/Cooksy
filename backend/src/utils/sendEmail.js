@@ -15,18 +15,22 @@ export const sendEmail = async ({ to, subject, html }) => {
     return;
   }
 
-  const transporter = nodemailer.createTransport({
-    host,
-    port: Number(port),
-    secure: Number(port) === 465,
-    auth: { user, pass }
-  });
+  try {
+    const transporter = nodemailer.createTransport({
+      host,
+      port: Number(port),
+      secure: Number(port) === 465,
+      auth: { user, pass }
+    });
 
-  await transporter.sendMail({
-    from,
-    to,
-    subject,
-    html
-  });
+    await transporter.sendMail({
+      from,
+      to,
+      subject,
+      html
+    });
+  } catch (err) {
+    console.error("Email send failed, but continuing:", err?.message || err);
+  }
 };
 
