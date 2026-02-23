@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { User } from "../models/User.js";
 import { generateToken } from "../utils/generateToken.js";
-import { sendEmail } from "../utils/sendEmail.js";
+import { isEmailConfigured, sendEmail } from "../utils/sendEmail.js";
 
 export const register = async (req, res) => {
   try {
@@ -81,6 +81,15 @@ export const forgotPassword = async (req, res) => {
     const { email } = req.body;
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
+    }
+
+    // In production, require SMTP config; otherwise users can never receive emails.
+    // We still return a generic message to avoid email enumeration.
+    if (process.env.NODE_ENV === "production" && !isEmailConfigured()) {
+      console.error("Forgot password requested but email is not configured.");
+      return res.status(500).json({
+        message: "Email service is not configured. Please try again later."
+      });
     }
 
     const user = await User.findOne({ email });
