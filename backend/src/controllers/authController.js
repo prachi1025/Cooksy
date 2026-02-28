@@ -100,13 +100,19 @@ export const forgotPassword = async (req, res) => {
       });
     }
 
-    const token = crypto.randomBytes(32).toString("hex");
-    user.resetPasswordToken = token;
+    // Generate secure random token for email, but only store a hash in DB
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(rawToken)
+      .digest("hex");
+
+    user.resetPasswordToken = tokenHash;
     user.resetPasswordExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
     await user.save();
 
     const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
-    const resetLink = `${clientUrl}/reset-password?token=${token}`;
+    const resetLink = `${clientUrl}/reset-password?token=${rawToken}`;
 
     await sendEmail({
       to: user.email,
@@ -139,8 +145,13 @@ export const resetPassword = async (req, res) => {
         .json({ message: "Token and new password are required" });
     }
 
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
     const user = await User.findOne({
-      resetPasswordToken: token,
+      resetPasswordToken: tokenHash,
       resetPasswordExpires: { $gt: new Date() }
     });
 

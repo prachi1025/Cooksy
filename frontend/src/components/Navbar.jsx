@@ -18,8 +18,8 @@ const Navbar = () => {
           to="/"
           className="flex items-center gap-2 text-emerald-400 font-semibold tracking-tight"
         >
-          <span className="h-7 w-7 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-xs">
-            🍳
+          <span className="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-xs">
+            <span className="text-xl">🍳</span>
           </span>
           <span>Cooksy</span>
         </Link>
